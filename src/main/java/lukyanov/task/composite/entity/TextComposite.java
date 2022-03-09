@@ -16,12 +16,12 @@ public class TextComposite implements TextComponent{
     }
 
     @Override
-    public boolean add(Symbol component) {
+    public boolean add(TextComponent component) {
         return componentList.add(component);
     }
 
     @Override
-    public boolean remove(Symbol component) {
+    public boolean remove(TextComponent component) {
         return componentList.remove(component);
     }
 

@@ -1,6 +1,5 @@
 package lukyanov.task.composite.entity;
 
-import lukyanov.task.composite.exception.CustomException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,13 +24,13 @@ public class Symbol implements TextComponent {
     }
 
     @Override
-    public boolean add(Symbol component) {
+    public boolean add(TextComponent component) {
         logger.error("can not resolve \"add\" method with symbol element");
         return false;
     }
 
     @Override
-    public boolean remove(Symbol component) {
+    public boolean remove(TextComponent component) {
         logger.error("can not resolve \"remove\" method with symbol element");
         return false;
     }
