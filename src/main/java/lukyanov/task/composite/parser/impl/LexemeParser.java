@@ -26,9 +26,9 @@ public class LexemeParser implements TextParser {
     public void parse(TextComponent component, String data) {
         Pattern regex = Pattern.compile(WORD_EXPRESSION_REGEX);
         Matcher matcher = regex.matcher(data);
-        EnumSet<WordExpression> set = EnumSet.range(WordExpression.FIVE, WordExpression.CONTENT_HERE);
+        WordExpression[] wordExpressions = WordExpression.values();
         if (matcher.find()) {
-            for (WordExpression e: set) {
+            for (WordExpression e: wordExpressions) {
                 data = data.replace(e.getExpression(), e.getResult());
             }
         }
