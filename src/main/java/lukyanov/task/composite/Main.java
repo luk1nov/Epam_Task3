@@ -3,6 +3,7 @@ package lukyanov.task.composite;
 import lukyanov.task.composite.exception.CustomException;
 import lukyanov.task.composite.interpreter.PolishNote;
 import lukyanov.task.composite.reader.TextReader;
+import lukyanov.task.composite.util.ArithmeticCalculator;
 import lukyanov.task.composite.util.ArithmeticExpression;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,9 +44,8 @@ public class Main {
 //        }
 //        System.out.println(text);
 
-        ArithmeticExpression expression = ArithmeticExpression.getInstance();
-        List<String> splittedExpression = expression.parseExpressionToPolish("(6+10-4)/(1+1*2)+1");
-        PolishNote polishNote = new PolishNote(splittedExpression);
-        polishNote.calculate();
+        ArithmeticCalculator calculator = new ArithmeticCalculator();
+        double result = calculator.calculate("(-71+(2+3/(3*(2+1/2+2)-2)/10+2))/7");
+        logger.info(result);
     }
 }
