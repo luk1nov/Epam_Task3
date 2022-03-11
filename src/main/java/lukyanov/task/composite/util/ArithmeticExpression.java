@@ -51,6 +51,7 @@ public class ArithmeticExpression {
 
     public List<String> parseExpressionToPolish(String data){
         List<String> charData = splitExpression(data);
+        logger.info(charData);
         List<String> outputArray = new ArrayList<>();
         ArrayDeque<String> operationStack = new ArrayDeque<>();
         Pattern p = Pattern.compile(DIGIT_REGEX);
@@ -109,6 +110,7 @@ public class ArithmeticExpression {
         }
     }
 
+    @Deprecated
     private List<String> splitExpression(String expression){
         String[] expressionArray = expression.split("");
         List<String> result = new ArrayList<>();
