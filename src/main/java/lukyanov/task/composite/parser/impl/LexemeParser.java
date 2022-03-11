@@ -20,6 +20,7 @@ public class LexemeParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
     private static final String LEXEME_SPLIT_REGEX = " ";
     private static final String WORD_EXPRESSION_REGEX = "\\(([A-Za-z]\\s?)+\\)";
+    private static final String ARITHMETIC_EXPRESSION_REGEX = "";
 
 
     @Override
