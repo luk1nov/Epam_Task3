@@ -11,8 +11,14 @@ public class Symbol implements TextComponent {
     private ComponentType type;
     private char symbol;
 
-    public Symbol(ComponentType type) {
+    public Symbol(char symbol) {
+        this.type = ComponentType.SYMBOL;
+        this.symbol = symbol;
+    }
+
+    public Symbol(ComponentType type, char symbol){
         this.type = type;
+        this.symbol = symbol;
     }
 
     public char getSymbol() {

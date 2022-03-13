@@ -1,5 +1,6 @@
 package lukyanov.task.composite.util;
 
+import lukyanov.task.composite.interpreter.Operator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,8 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ArithmeticExpression {
-    private static final String DIGIT_REGEX = "\\d+";
+    private static final String DIGIT_REGEX = "^-?\\d+$";
     private static final String OPERATOR_REGEX = "^[*/\\-+()]$";
+    private static final String BRACKET_REMOVE_REGEX = "-\\(";
     private static final Logger logger = LogManager.getLogger();
     private static ArithmeticExpression instance;
 
@@ -25,42 +27,19 @@ public class ArithmeticExpression {
         return instance;
     }
 
-    private enum Operator{
-        MULTIPLY("*", 1),
-        DIVISION("/", 1),
-        SUM("+", 2),
-        SUBTRACTION("-", 2),
-        OPEN_BRACKET("(", 3);
 
-        private final String sign;
-        private final int priority;
-
-        Operator(String sign, int priority) {
-            this.sign = sign;
-            this.priority = priority;
-        }
-
-        public String getSign() {
-            return sign;
-        }
-
-        public int getPriority() {
-            return priority;
-        }
-    }
 
     public List<String> parseExpressionToPolish(String data){
         List<String> charData = splitExpression(data);
-        logger.info(charData);
         List<String> outputArray = new ArrayList<>();
         ArrayDeque<String> operationStack = new ArrayDeque<>();
-        Pattern p = Pattern.compile(DIGIT_REGEX);
+        Pattern pattern = Pattern.compile(DIGIT_REGEX);
 
         for (String l: charData) {
-            Matcher m = p.matcher(l);
-            if(m.matches()){
+            Matcher matcher = pattern.matcher(l);
+            if(matcher.matches()){
                 outputArray.add(l);
-            } else if(l.equals("(") || l.equals(")")) {
+            } else {
                 switch (l){
                     case "(" -> operationStack.push(l);
                     case ")" -> {
@@ -70,16 +49,17 @@ public class ArithmeticExpression {
                             stackElementToPop = operationStack.pop();
                         }
                     }
-                }
-            } else {
-                Operator currentElement = Operator.valueOf(getOperationName(l));
-                if(!operationStack.isEmpty()){
-                    Operator lastStackElement = Operator.valueOf(getOperationName(operationStack.getFirst()));
-                    if (lastStackElement.getPriority() <= currentElement.getPriority()){
-                        outputArray.add(operationStack.pop());
+                    default -> {
+                        Operator currentElement = Operator.valueOf(getOperationName(l));
+                        if(!operationStack.isEmpty()){
+                            Operator lastStackElement = Operator.valueOf(getOperationName(operationStack.getFirst()));
+                            if (lastStackElement.getPriority() <= currentElement.getPriority()){
+                                outputArray.add(operationStack.pop());
+                            }
+                        }
+                        operationStack.push(l);
                     }
                 }
-                operationStack.push(l);
             }
         }
 
@@ -106,32 +86,38 @@ public class ArithmeticExpression {
             case "(" -> {
                 return "OPEN_BRACKET";
             }
-            default -> throw new IllegalArgumentException("unknown operator: " + operator);
+            default -> {
+                logger.error("unknown operator " + operator);
+                throw new IllegalArgumentException("unknown operator: " + operator);
+            }
         }
     }
 
-    @Deprecated
     private List<String> splitExpression(String expression){
+        expression = expression.replaceAll(BRACKET_REMOVE_REGEX, "+(-1)*(");
         String[] expressionArray = expression.split("");
         List<String> result = new ArrayList<>();
-        Pattern p = Pattern.compile(OPERATOR_REGEX);
-        StringBuilder current = new StringBuilder();
-        for (String l: expressionArray) {
-            Matcher m = p.matcher(l);
-            if(m.matches()){
-                if(!current.isEmpty()){
-                    result.add(current.toString());
-                    current = new StringBuilder();
+        Pattern pattern = Pattern.compile(OPERATOR_REGEX);
+        StringBuilder currentNumber = new StringBuilder();
+        for (String expressionElement: expressionArray) {
+            Matcher matcher = pattern.matcher(expressionElement);
+            if(matcher.matches()){
+                if(expressionElement.equals("-") && currentNumber.isEmpty() && (result.size() == 0 || !result.get(result.size()-1).equals(")"))){
+                    currentNumber.append(expressionElement);
+                } else if(!currentNumber.isEmpty()){
+                    result.add(currentNumber.toString());
+                    currentNumber = new StringBuilder();
+                    result.add(expressionElement);
+                } else {
+                    result.add(expressionElement);
                 }
-                result.add(l);
             } else {
-                current.append(l);
+                currentNumber.append(expressionElement);
             }
         }
-        if(!current.isEmpty()){
-            result.add(current.toString());
+        if(!currentNumber.isEmpty()){
+            result.add(currentNumber.toString());
         }
         return result;
     }
-
 }

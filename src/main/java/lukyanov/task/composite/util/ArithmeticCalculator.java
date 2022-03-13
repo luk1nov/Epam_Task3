@@ -12,7 +12,6 @@ public class ArithmeticCalculator {
 
     public Double calculate(String expression){
         List<String> splittedExpression = arithmeticExpression.parseExpressionToPolish(expression);
-        logger.info(splittedExpression);
         PolishNote polishNote = new PolishNote(splittedExpression);
         return polishNote.calculate();
     }

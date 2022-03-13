@@ -4,6 +4,7 @@ import lukyanov.task.composite.entity.ComponentType;
 import lukyanov.task.composite.entity.TextComponent;
 import lukyanov.task.composite.entity.TextComposite;
 import lukyanov.task.composite.parser.TextParser;
+import lukyanov.task.composite.util.ArithmeticCalculator;
 import lukyanov.task.composite.util.WordExpression;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,8 @@ public class LexemeParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
     private static final String LEXEME_SPLIT_REGEX = " ";
     private static final String WORD_EXPRESSION_REGEX = "\\(([A-Za-z]\\s?)+\\)";
-    private static final String ARITHMETIC_EXPRESSION_REGEX = "";
+    private static final String ARITHMETIC_EXPRESSION_REGEX = "-?\\d(?:[+*\\-/]\\d)+";
+    private static final ArithmeticCalculator calculator = new ArithmeticCalculator();
 
 
     @Override
@@ -34,13 +36,21 @@ public class LexemeParser implements TextParser {
             }
         }
 
-        List<String> lexemes = Stream.of((data.split(LEXEME_SPLIT_REGEX))).toList();
+        String[] lexemes = data.split(LEXEME_SPLIT_REGEX);
 
-        for (String lexeme: lexemes) {
+        for (int i = 0; i < lexemes.length; i++) {
             TextComponent lexemeComponent = new TextComposite(ComponentType.LEXEME);
+            regex = Pattern.compile(ARITHMETIC_EXPRESSION_REGEX);
+            matcher = regex.matcher(lexemes[i]);
+            if(matcher.find()){
+                Double expressionResult = calculator.calculate(lexemes[i]);
+                String settedValue = String.format("%,.1f", expressionResult);
+                logger.info(settedValue);
+                lexemes[i] = settedValue;
+            }
             component.add(lexemeComponent);
             TextParser nextParser = new WordParser();
-            nextParser.parse(lexemeComponent, lexeme);
+            nextParser.parse(lexemeComponent, lexemes[i]);
         }
     }
 }

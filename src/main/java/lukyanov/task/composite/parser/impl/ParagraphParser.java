@@ -7,10 +7,6 @@ import lukyanov.task.composite.parser.TextParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class ParagraphParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
     private static final String PARAGRAPH_SPLIT_REGEX = "\\n";

@@ -9,10 +9,12 @@ public enum ComponentType {
     SYMBOL(),
     PUNCTUATION();
 
-    private String prefix;
-    private String postfix;
+    private final String prefix;
+    private final String postfix;
 
     ComponentType() {
+        prefix = "";
+        postfix = "";
     }
 
     ComponentType(String prefix, String postfix) {
