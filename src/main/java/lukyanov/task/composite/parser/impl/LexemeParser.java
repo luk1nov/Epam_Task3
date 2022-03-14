@@ -23,6 +23,7 @@ public class LexemeParser implements TextParser {
     private static final String WORD_EXPRESSION_REGEX = "\\(([A-Za-z]\\s?)+\\)";
     private static final String ARITHMETIC_EXPRESSION_REGEX = "-?\\d(?:[+*\\-/]\\d)+";
     private static final ArithmeticCalculator calculator = new ArithmeticCalculator();
+    private final TextParser nextParser = new WordParser();
 
 
     @Override
@@ -35,7 +36,6 @@ public class LexemeParser implements TextParser {
                 data = data.replace(e.getExpression(), e.getResult());
             }
         }
-
         String[] lexemes = data.split(LEXEME_SPLIT_REGEX);
 
         for (int i = 0; i < lexemes.length; i++) {
@@ -49,7 +49,6 @@ public class LexemeParser implements TextParser {
                 lexemes[i] = settedValue;
             }
             component.add(lexemeComponent);
-            TextParser nextParser = new WordParser();
             nextParser.parse(lexemeComponent, lexemes[i]);
         }
     }

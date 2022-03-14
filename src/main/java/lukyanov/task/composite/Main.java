@@ -30,7 +30,7 @@ public class Main {
         ParagraphParser parser = new ParagraphParser();
         TextComponent component = new TextComposite(ComponentType.TEXT);
         parser.parse(component, text);
-        System.out.println(component);
         System.out.println(text);
+        System.out.println(component);
     }
 }

@@ -18,7 +18,7 @@ public class TextReader {
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
             lines = br.lines()
                     .map(i -> i + "\n")
-                    .collect(Collectors.joining());
+                    .collect(Collectors.joining()).stripTrailing();
         } catch (FileNotFoundException e) {
             logger.error("file " + filepath + "not found");
             throw new CustomException("file " + filepath + "not found");

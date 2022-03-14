@@ -8,23 +8,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class SentenceParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
-    private static final String SENTENCE_SPLIT_REGEX = "\\.";
+    private static final String SENTENCE_SPLIT_REGEX = "\\p{Upper}[^.!?]*(?:\\.{3}|[.!?])";
+    private final TextParser nextParser = new LexemeParser();
+
 
     @Override
     public void parse(TextComponent component, String data) {
-        List<String> sentences = Stream.of((data.split(SENTENCE_SPLIT_REGEX)))
-                .map(i -> i.strip() + '.')
-                .toList();
+        Pattern regex = Pattern.compile(SENTENCE_SPLIT_REGEX);
+        Matcher matcher = regex.matcher(data);
 
-        for (String sentence: sentences) {
+        while (matcher.find()){
             TextComponent sentenceComponent = new TextComposite(ComponentType.SENTENCE);
             component.add(sentenceComponent);
-            TextParser nextParser = new LexemeParser();
-            nextParser.parse(sentenceComponent, sentence);
+            nextParser.parse(sentenceComponent, matcher.group());
         }
     }
 }
