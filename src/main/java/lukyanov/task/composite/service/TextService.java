@@ -1,7 +1,6 @@
 package lukyanov.task.composite.service;
 
 import lukyanov.task.composite.entity.TextComponent;
-import lukyanov.task.composite.entity.TextComposite;
 import lukyanov.task.composite.exception.CustomException;
 
 import java.util.Comparator;
@@ -17,7 +16,7 @@ public interface TextService {
 
     TextComponent deleteSentences(TextComponent c);
 
-    Map<String, Integer> findSimilarWords(TextComponent c);
+    Map<String, Integer> findRepeatedWords(TextComponent c) throws CustomException;
 
     Integer getVowelLetters(TextComponent c);
 

@@ -7,6 +7,8 @@ import lukyanov.task.composite.exception.CustomException;
 import lukyanov.task.composite.interpreter.PolishNote;
 import lukyanov.task.composite.parser.impl.ParagraphParser;
 import lukyanov.task.composite.reader.TextReader;
+import lukyanov.task.composite.service.TextService;
+import lukyanov.task.composite.service.impl.TextServiceImpl;
 import lukyanov.task.composite.util.ArithmeticCalculator;
 import lukyanov.task.composite.util.ArithmeticExpression;
 import org.apache.logging.log4j.LogManager;
@@ -32,5 +34,7 @@ public class Main {
         parser.parse(component, text);
         System.out.println(text);
         System.out.println(component);
+        TextService service = new TextServiceImpl();
+        System.out.println(service.findRepeatedWords(component));
     }
 }

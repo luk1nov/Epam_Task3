@@ -8,9 +8,7 @@ import lukyanov.task.composite.service.TextService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,8 +52,27 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public Map<String, Integer> findSimilarWords(TextComponent component) {
-        return null;
+    public Map<String, Integer> findRepeatedWords(TextComponent component) throws CustomException {
+        Map<String, Integer> repeatedWords = new HashMap<>();
+        if (!component.getType().equals(ComponentType.TEXT)){
+            logger.error("unsupported component type to find repeating words");
+            throw new CustomException("unsupported component type to find repeating words");
+        }
+        for (TextComponent paragraph: component.getChild()) {
+            for (TextComponent sentence: paragraph.getChild()) {
+                for (TextComponent lexeme: sentence.getChild()) {
+                    for (TextComponent word: lexeme.getChild()) {
+                        String currentWord = word.toString().toLowerCase();
+                        Integer currentCount = 0;
+                        if(repeatedWords.containsKey(currentWord)){
+                            currentCount = repeatedWords.get(currentWord);
+                        }
+                        repeatedWords.put(currentWord, ++currentCount);
+                    }
+                }
+            }
+        }
+        return repeatedWords;
     }
 
 
