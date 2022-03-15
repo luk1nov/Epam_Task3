@@ -12,13 +12,13 @@ import java.util.regex.Pattern;
 
 public class SentenceParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
-    private static final String SENTENCE_SPLIT_REGEX = "\\p{Upper}[^.!?]*(?:\\.{3}|[.!?])";
+    private static final String SENTENCE_REGEX = "\\p{Upper}[^.!?]*(?:\\.{3}|[.!?])";
     private final TextParser nextParser = new LexemeParser();
 
 
     @Override
     public void parse(TextComponent component, String data) {
-        Pattern regex = Pattern.compile(SENTENCE_SPLIT_REGEX);
+        Pattern regex = Pattern.compile(SENTENCE_REGEX);
         Matcher matcher = regex.matcher(data);
 
         while (matcher.find()){
