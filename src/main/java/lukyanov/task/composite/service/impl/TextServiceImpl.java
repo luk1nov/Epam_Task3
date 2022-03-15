@@ -13,8 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextServiceImpl implements TextService {
-    private static final String VOWEL_LETTERS_REGEX = "[aeiou]";
-    private static final String CONSONANT_LETTERS_REGEX = "[b-df-hj-np-tv-z]";
+    private static final String VOWEL_LETTERS_REGEX = "[aAeEiIoOuU]";
+    private static final String CONSONANT_LETTERS_REGEX = "[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z]";
     private static final Logger logger = LogManager.getLogger();
 
 
