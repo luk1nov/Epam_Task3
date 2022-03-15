@@ -2,7 +2,6 @@ package lukyanov.task.composite.service.impl;
 
 import lukyanov.task.composite.entity.ComponentType;
 import lukyanov.task.composite.entity.TextComponent;
-import lukyanov.task.composite.entity.TextComposite;
 import lukyanov.task.composite.exception.CustomException;
 import lukyanov.task.composite.service.TextService;
 import org.apache.logging.log4j.LogManager;
@@ -47,8 +46,20 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public TextComponent deleteSentences(TextComponent component) {
-        return null;
+    public void deleteSentences(TextComponent component, int minWords) throws CustomException {
+        if (!component.getType().equals(ComponentType.TEXT)){
+            logger.error("unsupported component type to delete sentences");
+            throw new CustomException("unsupported component type to delete sentences");
+        }
+        for (TextComponent paragraph: component.getChild()) {
+            List<TextComponent> componentsToRemove = new ArrayList<>();
+            for (TextComponent sentence: paragraph.getChild()) {
+                if (getWordsCountInSentence(sentence) < minWords){
+                    componentsToRemove.add(sentence);
+                }
+            }
+            paragraph.getChild().removeAll(componentsToRemove);
+        }
     }
 
     @Override
@@ -77,18 +88,30 @@ public class TextServiceImpl implements TextService {
 
 
     @Override
-    public Integer getVowelLetters(TextComponent component) {
-        String componentConetent = component.toString().strip();
+    public Long getVowelLetters(TextComponent component) {
+        String componentContent = component.toString().strip();
         Pattern regex = Pattern.compile(VOWEL_LETTERS_REGEX);
-        Matcher matcher = regex.matcher(componentConetent);
-        return matcher.groupCount();
+        Matcher matcher = regex.matcher(componentContent);
+        return matcher.results().count();
     }
 
     @Override
-    public Integer getConsonantLetters(TextComponent component) {
-        String componentConetent = component.toString().strip();
+    public Long getConsonantLetters(TextComponent component) {
+        String componentContent = component.toString().strip();
         Pattern regex = Pattern.compile(CONSONANT_LETTERS_REGEX);
-        Matcher matcher = regex.matcher(componentConetent);
-        return matcher.groupCount();
+        Matcher matcher = regex.matcher(componentContent);
+        return matcher.results().count();
+    }
+
+    private int getWordsCountInSentence(TextComponent sentence){
+        int wordsInSentence = 0;
+        for (TextComponent lexeme: sentence.getChild()) {
+            for (TextComponent word: lexeme.getChild()) {
+                if (word.getType().equals(ComponentType.WORD)){
+                    wordsInSentence++;
+                }
+            }
+        }
+        return wordsInSentence;
     }
 }

@@ -14,11 +14,11 @@ public interface TextService {
 
     List<TextComponent> getSentencesWithLongestWords(TextComponent c);
 
-    TextComponent deleteSentences(TextComponent c);
+    void deleteSentences(TextComponent c, int minWords) throws CustomException;
 
     Map<String, Integer> findRepeatedWords(TextComponent c) throws CustomException;
 
-    Integer getVowelLetters(TextComponent c);
+    Long getVowelLetters(TextComponent c);
 
-    Integer getConsonantLetters(TextComponent c);
+    Long getConsonantLetters(TextComponent c);
 }
