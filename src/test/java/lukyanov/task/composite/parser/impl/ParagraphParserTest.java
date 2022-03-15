@@ -20,6 +20,7 @@ class ParagraphParserTest {
         int expectedParagraphAmount = 2;
         TextComponent textComponent = new TextComposite(ComponentType.TEXT);
         parser.parse(textComponent, text);
+        System.out.println(textComponent);
         assertEquals(expectedParagraphAmount, textComponent.getChild().size());
     }
 
