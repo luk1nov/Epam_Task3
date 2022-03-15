@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class WordParser implements TextParser {
     private static final String WORD_REGEX = "^[A-Za-z0-9,\\-]+$";
-    private static final String WORD_PUNCTUATION_REGEX = "^[A-Za-z0-9,\\-]+|[\\p{Punct}]$";
+    private static final String WORD_PUNCTUATION_REGEX = "[A-Za-z0-9,\\-]+|[\\p{Punct}]";
     private final SymbolParser parser = new SymbolParser();
 
     @Override
@@ -19,9 +19,9 @@ public class WordParser implements TextParser {
         Pattern regex = Pattern.compile(WORD_PUNCTUATION_REGEX);
         Matcher matcher = regex.matcher(data);
 
+        Pattern wordPattern = Pattern.compile(WORD_REGEX);
         while (matcher.find()){
             String findString = matcher.group();
-            Pattern wordPattern = Pattern.compile(WORD_REGEX);
             Matcher wordMatcher = wordPattern.matcher(findString);
             if (wordMatcher.find()){
                 TextComponent word = new TextComposite(ComponentType.WORD);
