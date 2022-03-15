@@ -1,6 +1,5 @@
 package lukyanov.task.composite.interpreter;
 
-import lukyanov.task.composite.interpreter.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +18,17 @@ public class PolishNote {
                 continue;
             }
             switch (lexeme) {
-                case "*" -> expressionList.add(new TerminalExpressionMultiply());
-                case "/" -> expressionList.add(new TerminalExpressionDevide());
-                case "+" -> expressionList.add(new TerminalExpressionPlus());
-                case "-" -> expressionList.add(new TerminalExpressionMinus());
-                default -> expressionList.add(new NonterminalExpressionNumber(Double.parseDouble(lexeme)));
+                case "*" -> expressionList.add(c -> c.push(c.pop() * c.pop()));
+                case "/" -> expressionList.add(c -> {
+                    Double poppedValue = c.pop();
+                    c.push(c.pop() - poppedValue);
+                });
+                case "+" -> expressionList.add(c -> c.push(c.pop() + c.pop()));
+                case "-" -> expressionList.add(c -> {
+                    Double poppedValue = c.pop();
+                    c.push(c.pop() / poppedValue);
+                });
+                default -> expressionList.add(c -> c.push(Double.parseDouble(lexeme)));
             }
         }
     }
