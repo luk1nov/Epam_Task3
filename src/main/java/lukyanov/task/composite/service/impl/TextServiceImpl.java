@@ -15,11 +15,21 @@ public class TextServiceImpl implements TextService {
     private static final String VOWEL_LETTERS_REGEX = "[aAeEiIoOuU]";
     private static final String CONSONANT_LETTERS_REGEX = "[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z]";
     private static final Logger logger = LogManager.getLogger();
+    private static TextServiceImpl instance;
 
+    private TextServiceImpl() {
+    }
+
+    public static TextServiceImpl getInstance() {
+        if(instance == null){
+            instance = new TextServiceImpl();
+        }
+        return instance;
+    }
 
     @Override
     public List<TextComponent> sortBySentences(List<TextComponent> components, Comparator<TextComponent> comparator) throws CustomException {
-        if (!components.get(0).getType().equals(ComponentType.SENTENCE)){
+        if (!components.get(0).getType().equals(ComponentType.PARAGRAPH)){
             logger.error("can not sort not paragraph components");
             throw new CustomException("can not sort not paragraph components");
         }
@@ -30,7 +40,7 @@ public class TextServiceImpl implements TextService {
 
     @Override
     public List<TextComponent> sortBySentences(TextComponent component, Comparator<TextComponent> comparator) throws CustomException {
-        if (!component.getType().equals(ComponentType.SENTENCE)){
+        if (!component.getType().equals(ComponentType.TEXT)){
             logger.error("can not sort not text component");
             throw new CustomException("can not sort not text component");
         }

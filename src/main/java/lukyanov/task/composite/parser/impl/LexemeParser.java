@@ -30,7 +30,6 @@ public class LexemeParser implements TextParser {
             if(matcher.find()){
                 Double expressionResult = calculator.calculate(lexemes[i]);
                 String settedValue = String.format("%,.1f", expressionResult);
-                logger.info(settedValue);
                 lexemes[i] = settedValue;
             }
             component.add(lexemeComponent);
