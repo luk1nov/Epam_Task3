@@ -1,6 +1,6 @@
 package lukyanov.task.composite.util;
 
-import lukyanov.task.composite.interpreter.Operator;
+import lukyanov.task.composite.interpreter.OperatorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,9 +50,9 @@ public class ArithmeticExpression {
                         }
                     }
                     default -> {
-                        Operator currentElement = Operator.valueOf(getOperationName(l));
+                        OperatorType currentElement = OperatorType.valueOf(getOperationName(l));
                         if(!operationStack.isEmpty()){
-                            Operator lastStackElement = Operator.valueOf(getOperationName(operationStack.getFirst()));
+                            OperatorType lastStackElement = OperatorType.valueOf(getOperationName(operationStack.getFirst()));
                             if (lastStackElement.getPriority() <= currentElement.getPriority()){
                                 outputArray.add(operationStack.pop());
                             }

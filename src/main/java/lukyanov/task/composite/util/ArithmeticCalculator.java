@@ -1,6 +1,6 @@
 package lukyanov.task.composite.util;
 
-import lukyanov.task.composite.interpreter.PolishNote;
+import lukyanov.task.composite.interpreter.PolishNoteInterpreter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +12,7 @@ public class ArithmeticCalculator {
 
     public Double calculate(String expression){
         List<String> splittedExpression = arithmeticExpression.parseExpressionToPolish(expression);
-        PolishNote polishNote = new PolishNote(splittedExpression);
-        return polishNote.calculate();
+        PolishNoteInterpreter polishNoteInterpreter = new PolishNoteInterpreter(splittedExpression);
+        return polishNoteInterpreter.calculate();
     }
 }
