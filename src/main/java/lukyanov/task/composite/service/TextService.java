@@ -12,7 +12,7 @@ public interface TextService {
 
     List<TextComponent> sortBySentences(TextComponent c, Comparator<TextComponent> comparator) throws CustomException;
 
-    List<TextComponent> getSentencesWithLongestWords(TextComponent c);
+    List<TextComponent> getSentencesWithLongestWords(TextComponent c) throws CustomException;
 
     void deleteSentences(TextComponent c, int minWords) throws CustomException;
 
