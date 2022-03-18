@@ -3,7 +3,7 @@ package lukyanov.task.composite.interpreter;
 import java.util.ArrayDeque;
 
 public class PolishNoteContext {
-    ArrayDeque<Double> contextValues = new ArrayDeque<>();
+    private ArrayDeque<Double> contextValues = new ArrayDeque<>();
 
     public void push(Double pushValue) {
         contextValues.push(pushValue);
