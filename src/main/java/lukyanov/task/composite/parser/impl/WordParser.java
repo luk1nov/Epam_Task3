@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WordParser implements TextParser {
-    private static final String WORD_REGEX = "^[A-Za-z0-9,\\-]+$";
-    private static final String WORD_PUNCTUATION_REGEX = "[A-Za-z0-9,\\-]+|[\\p{Punct}]";
+    private static final String WORD_REGEX = "^[A-Za-z]+|-?\\d+,\\d+|-?\\d+$";
+    private static final String WORD_PUNCTUATION_REGEX = "[A-Za-z]+|-?\\d+(?:,\\d+)?|[\\p{Punct}]";
     private final SymbolParser parser = new SymbolParser();
 
     @Override
