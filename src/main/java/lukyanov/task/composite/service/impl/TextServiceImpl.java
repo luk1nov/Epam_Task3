@@ -51,8 +51,40 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public List<TextComponent> getSentencesWithLongestWords(TextComponent component) {
-        return null;
+    public List<TextComponent> getSentencesWithLongestWords(TextComponent text) throws CustomException {
+        List<TextComponent> sentences = new ArrayList<>();
+        int maxWordLength = 0;
+        if (!text.getType().equals(ComponentType.TEXT)){
+            logger.error("can not sort not text component");
+            throw new CustomException("can not sort not text component");
+        }
+        for (TextComponent paragraph: text.getChild()) {
+            for (TextComponent sentence: paragraph.getChild()) {
+                int maxWordLengthInSentence = 0;
+                for (TextComponent lexeme: sentence.getChild()) {
+                    for (TextComponent word: lexeme.getChild()) {
+                        if (word.getType().equals(ComponentType.WORD)){
+                            int wordLength = word.getChild().size();
+                            if (wordLength >= maxWordLengthInSentence){
+                                if (wordLength > maxWordLength){
+                                    sentences = new ArrayList<>();
+                                    maxWordLengthInSentence = wordLength;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (maxWordLengthInSentence >= maxWordLength){
+                    if (maxWordLengthInSentence > maxWordLength){
+                        maxWordLength = maxWordLengthInSentence;
+                        sentences = new ArrayList<>();
+                    }
+                    sentences.add(sentence);
+                }
+            }
+        }
+        logger.info("max word length = " + maxWordLength);
+        return sentences;
     }
 
     @Override
@@ -61,6 +93,7 @@ public class TextServiceImpl implements TextService {
             logger.error("unsupported component type to delete sentences");
             throw new CustomException("unsupported component type to delete sentences");
         }
+        List<TextComponent> emptyParagraphs = new ArrayList<>();
         for (TextComponent paragraph: component.getChild()) {
             List<TextComponent> componentsToRemove = new ArrayList<>();
             for (TextComponent sentence: paragraph.getChild()) {
@@ -69,7 +102,11 @@ public class TextServiceImpl implements TextService {
                 }
             }
             paragraph.getChild().removeAll(componentsToRemove);
+            if (paragraph.getChild().size() == 0){
+                emptyParagraphs.add(paragraph);
+            }
         }
+        component.getChild().removeAll(emptyParagraphs);
     }
 
     @Override
@@ -83,12 +120,14 @@ public class TextServiceImpl implements TextService {
             for (TextComponent sentence: paragraph.getChild()) {
                 for (TextComponent lexeme: sentence.getChild()) {
                     for (TextComponent word: lexeme.getChild()) {
-                        String currentWord = word.toString().toLowerCase();
-                        Integer currentCount = 0;
-                        if(repeatedWords.containsKey(currentWord)){
-                            currentCount = repeatedWords.get(currentWord);
+                        if (word.getType().equals(ComponentType.WORD)) {
+                            String currentWord = word.toString().toLowerCase();
+                            Integer currentCount = 0;
+                            if (repeatedWords.containsKey(currentWord)) {
+                                currentCount = repeatedWords.get(currentWord);
+                            }
+                            repeatedWords.put(currentWord, ++currentCount);
                         }
-                        repeatedWords.put(currentWord, ++currentCount);
                     }
                 }
             }
