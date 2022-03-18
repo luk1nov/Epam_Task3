@@ -20,8 +20,8 @@ public class TextReader {
                     .map(i -> i + "\n")
                     .collect(Collectors.joining()).stripTrailing();
         } catch (FileNotFoundException e) {
-            logger.error("file " + filepath + "not found");
-            throw new CustomException("file " + filepath + "not found");
+            logger.error("file " + filepath + " not found");
+            throw new CustomException("file " + filepath + " not found");
         } catch (IOException e) {
             logger.error("reading error");
             throw new CustomException("reading error");
