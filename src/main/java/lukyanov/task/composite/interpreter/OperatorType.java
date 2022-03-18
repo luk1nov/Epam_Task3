@@ -1,6 +1,6 @@
 package lukyanov.task.composite.interpreter;
 
-public enum Operator{
+public enum OperatorType {
     MULTIPLY("*", 1),
     DIVISION("/", 1),
     SUM("+", 2),
@@ -10,7 +10,7 @@ public enum Operator{
     private final String sign;
     private final int priority;
 
-    Operator(String sign, int priority) {
+    OperatorType(String sign, int priority) {
         this.sign = sign;
         this.priority = priority;
     }
