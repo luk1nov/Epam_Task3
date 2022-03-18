@@ -29,8 +29,6 @@ class TextReaderTest {
 
     @Test
     void readTextFromIncorrectFile() {
-        assertThrows(CustomException.class, () -> {
-            String text = reader.readTextFromFile(filepath + "123");
-        });
+        assertThrows(CustomException.class, () -> reader.readTextFromFile(filepath + "123"));
     }
 }
