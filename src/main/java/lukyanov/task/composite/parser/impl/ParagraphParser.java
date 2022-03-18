@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ParagraphParser implements TextParser {
     private static final Logger logger = LogManager.getLogger();
-    private static final String PARAGRAPH_SPLIT_REGEX = "\\n";
+    private static final String PARAGRAPH_SPLIT_REGEX = "[\\n|\\t]+";
     private final TextParser nextParser = new SentenceParser();
 
 
@@ -18,9 +18,11 @@ public class ParagraphParser implements TextParser {
         String[] paragraphs = data.split(PARAGRAPH_SPLIT_REGEX);
 
         for (String paragraph: paragraphs) {
-            TextComponent paragraphComponent = new TextComposite(ComponentType.PARAGRAPH);
-            component.add(paragraphComponent);
-            nextParser.parse(paragraphComponent, paragraph);
+            if (!paragraph.isBlank()) {
+                TextComponent paragraphComponent = new TextComposite(ComponentType.PARAGRAPH);
+                component.add(paragraphComponent);
+                nextParser.parse(paragraphComponent, paragraph);
+            }
         }
     }
 }
