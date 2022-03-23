@@ -27,8 +27,6 @@ public class ArithmeticExpression {
         return instance;
     }
 
-
-
     public List<String> parseExpressionToPolish(String data){
         List<String> charData = splitExpression(data);
         List<String> outputArray = new ArrayList<>();
