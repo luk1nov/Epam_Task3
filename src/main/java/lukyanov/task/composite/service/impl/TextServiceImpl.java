@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class TextServiceImpl implements TextService {
     private static final String VOWEL_LETTERS_REGEX = "[aAeEiIoOuU]";
@@ -29,7 +30,7 @@ public class TextServiceImpl implements TextService {
 
     @Override
     public List<TextComponent> sortBySentences(List<TextComponent> components, Comparator<TextComponent> comparator) throws CustomException {
-        if (!components.get(0).getType().equals(ComponentType.PARAGRAPH)){
+        if (components.get(0).getType() != ComponentType.PARAGRAPH){
             logger.error("can not sort not paragraph components");
             throw new CustomException("can not sort not paragraph components");
         }
@@ -40,7 +41,7 @@ public class TextServiceImpl implements TextService {
 
     @Override
     public List<TextComponent> sortBySentences(TextComponent component, Comparator<TextComponent> comparator) throws CustomException {
-        if (!component.getType().equals(ComponentType.TEXT)){
+        if (component.getType() != ComponentType.TEXT){
             logger.error("can not sort not text component");
             throw new CustomException("can not sort not text component");
         }
@@ -52,44 +53,36 @@ public class TextServiceImpl implements TextService {
 
     @Override
     public List<TextComponent> getSentencesWithLongestWords(TextComponent text) throws CustomException {
-        List<TextComponent> sentences = new ArrayList<>();
-        int maxWordLength = 0;
-        if (!text.getType().equals(ComponentType.TEXT)){
+        if (text.getType() != ComponentType.TEXT){
             logger.error("can not sort not text component");
             throw new CustomException("can not sort not text component");
         }
-        for (TextComponent paragraph: text.getChild()) {
-            for (TextComponent sentence: paragraph.getChild()) {
-                int maxWordLengthInSentence = 0;
-                for (TextComponent lexeme: sentence.getChild()) {
-                    for (TextComponent word: lexeme.getChild()) {
-                        if (word.getType().equals(ComponentType.WORD)){
-                            int wordLength = word.getChild().size();
-                            if (wordLength >= maxWordLengthInSentence){
-                                if (wordLength > maxWordLength){
-                                    sentences = new ArrayList<>();
-                                    maxWordLengthInSentence = wordLength;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (maxWordLengthInSentence >= maxWordLength){
-                    if (maxWordLengthInSentence > maxWordLength){
-                        maxWordLength = maxWordLengthInSentence;
-                        sentences = new ArrayList<>();
-                    }
-                    sentences.add(sentence);
-                }
-            }
-        }
-        logger.info("max word length = " + maxWordLength);
-        return sentences;
+
+        List<TextComponent> sentences = text.getChild().stream().
+                flatMap(p -> p.getChild().stream())
+                .toList();
+
+        OptionalInt optionalMaxLengthWord = sentences.stream()
+                .flatMap(s -> s.getChild().stream())
+                .flatMap(l -> l.getChild().stream())
+                .filter(w -> w.getType() == ComponentType.WORD)
+                .mapToInt(w -> w.getChild().size())
+                .max();
+
+        final int maxWordLength = optionalMaxLengthWord.orElseThrow(() -> new CustomException("incorrect optional max word length"));
+
+        List<TextComponent> resultSentences = sentences.stream()
+                .filter(s -> s.getChild().stream()
+                        .anyMatch(l -> l.getChild().stream()
+                                .filter(w -> w.getType() == ComponentType.WORD)
+                                .anyMatch(w -> w.getChild().size() == maxWordLength)))
+                .toList();
+        return resultSentences;
     }
 
     @Override
     public void deleteSentences(TextComponent component, int minWords) throws CustomException {
-        if (!component.getType().equals(ComponentType.TEXT)){
+        if (component.getType() != ComponentType.TEXT){
             logger.error("unsupported component type to delete sentences");
             throw new CustomException("unsupported component type to delete sentences");
         }
@@ -111,27 +104,18 @@ public class TextServiceImpl implements TextService {
 
     @Override
     public Map<String, Integer> findRepeatedWords(TextComponent component) throws CustomException {
-        Map<String, Integer> repeatedWords = new HashMap<>();
-        if (!component.getType().equals(ComponentType.TEXT)){
+        if (component.getType() != ComponentType.TEXT){
             logger.error("unsupported component type to find repeating words");
             throw new CustomException("unsupported component type to find repeating words");
         }
-        for (TextComponent paragraph: component.getChild()) {
-            for (TextComponent sentence: paragraph.getChild()) {
-                for (TextComponent lexeme: sentence.getChild()) {
-                    for (TextComponent word: lexeme.getChild()) {
-                        if (word.getType().equals(ComponentType.WORD)) {
-                            String currentWord = word.toString().toLowerCase();
-                            Integer currentCount = 0;
-                            if (repeatedWords.containsKey(currentWord)) {
-                                currentCount = repeatedWords.get(currentWord);
-                            }
-                            repeatedWords.put(currentWord, ++currentCount);
-                        }
-                    }
-                }
-            }
-        }
+        Map<String, Integer> repeatedWords = component.getChild().stream()
+                .flatMap(p -> p.getChild().stream())
+                .flatMap(s -> s.getChild().stream())
+                .flatMap(l -> l.getChild().stream())
+                .filter(w -> w.getType() == ComponentType.WORD)
+                .map(w -> w.toString().toLowerCase())
+                .collect(Collectors.toMap(str -> str, i -> 1, Integer::sum));
+        repeatedWords.values().removeIf(i -> i == 1);
         return repeatedWords;
     }
 
@@ -152,15 +136,11 @@ public class TextServiceImpl implements TextService {
         return matcher.results().count();
     }
 
-    private int getWordsCountInSentence(TextComponent sentence){
-        int wordsInSentence = 0;
-        for (TextComponent lexeme: sentence.getChild()) {
-            for (TextComponent word: lexeme.getChild()) {
-                if (word.getType().equals(ComponentType.WORD)){
-                    wordsInSentence++;
-                }
-            }
-        }
-        return wordsInSentence;
+    private long getWordsCountInSentence(TextComponent sentence){
+        long count = sentence.getChild().stream()
+                .flatMap(l -> l.getChild().stream())
+                .filter(w -> w.getType() == ComponentType.WORD)
+                .count();
+        return count;
     }
 }
