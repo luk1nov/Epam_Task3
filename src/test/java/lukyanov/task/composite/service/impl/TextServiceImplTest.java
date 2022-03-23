@@ -95,10 +95,6 @@ class TextServiceImplTest {
         Map<String, Integer> expectedRepeatedWords = new HashMap<>();
         expectedRepeatedWords.put("one", 4);
         expectedRepeatedWords.put("two", 3);
-        expectedRepeatedWords.put("three", 1);
-        expectedRepeatedWords.put("four", 1);
-        expectedRepeatedWords.put("seventeen", 1);
-        expectedRepeatedWords.put("seven", 1);
         Map<String, Integer> realRepeatedWords = null;
         try {
             realRepeatedWords = service.findRepeatedWords(component);
